@@ -1,10 +1,20 @@
 // console.log("Hello World");
-
+const errorMessage = document.getElementById("salaryError");
 // Salary Column
 document.getElementById("saveSalary").onclick = () => {
   let Salary = document.getElementById("salary").value;
 
-  document.getElementById("salario").innerText = Salary;
+  // empty or negative input
+  if (Salary === "" || Salary < 0) {
+    errorMessage.classList.remove("hide");
+  } else {
+    errorMessage.classList.add("hide");
+  }
+
+  amount.innerHTML = Salary;
+
+  // Set Balance
+  balanceValue.innerText = Salary - expenditureValue.innerText;
 };
 
 // document.getElementById();
@@ -12,10 +22,10 @@ document.getElementById("saveSalary").onclick = () => {
 // Expense Column
 document.getElementById("saveExpense").onclick = () => {
   let Expense = document.getElementById("rightName").value;
-  let Amount = document.getElementById("rightAmount").value;
+  let expenditureValue = document.getElementById("rightAmount").value;
 
   document.getElementById("expenseHeading").innerText = Expense;
-  document.getElementById("expenseTitle").innerText = Amount;
+  document.getElementById("expenseTitle").innerText = expenditureValue;
 };
 
 // console.log(Expense);
