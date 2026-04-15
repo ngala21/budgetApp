@@ -1,5 +1,7 @@
 // console.log("Hello World");
 const errorMessage = document.getElementById("salaryError");
+const expenditureValue = document.getElementById("rightAmount");
+const balanceValue = document.getElementById("balance");
 // Salary Column
 document.getElementById("saveSalary").onclick = () => {
   let Salary = document.getElementById("salary").value;
