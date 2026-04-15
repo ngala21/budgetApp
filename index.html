@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript Budget Calculator</title>
+    <link rel="stylesheet" type="text/css" href="./css/style.css" />
+  </head>
+  <body>
+    <div class="main">
+      <div class="two">
+        <h1>Budget Calculator</h1>
+
+        <div class="combine">
+          <div class="left">
+            <h2>Salary</h2>
+            <input type="text" id="salary" placeholder="enter your salary" />
+            <p></p>
+            <button id="saveSalary">Save Salary</button>
+          </div>
+          <div class="right">
+            <h2>Expenses</h2>
+            <input
+              type="text"
+              id="rightName"
+              placeholder="enter expense name"
+            />
+            <input
+              type="number"
+              id="rightAmount"
+              placeholder="enter expense amount"
+            />
+            <button id="saveExpense">Save Expense</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="result">
+        <div class="result1">
+          <h3>Salary</h3>
+          <p id="salario"></p>
+        </div>
+        <div class="result2">
+          <h3>Expenses</h3>
+          <p></p>
+        </div>
+        <div class="result3">
+          <h3>Balance</h3>
+          <p></p>
+        </div>
+      </div>
+
+      <div class="expense">
+        <h4>Expense List</h4>
+        <div class="expenses" id="showExpenses">
+          <div class="expensess">
+            <h5 id="expenseHeading"></h5>
+            <p id="expenseTitle"></p>
+            <i></i>
+            <i></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./js/app.js" type="text/JavaScript" defer></script>
+  </body>
+</html>
