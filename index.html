@@ -8,14 +8,13 @@
   </head>
   <body>
     <div class="main">
-      <div class="two">
+      <div class="wrapper">
         <h1>Budget Calculator</h1>
-
         <div class="combine">
           <div class="left">
             <h2>Salary</h2>
             <input type="text" id="salary" placeholder="enter your salary" />
-            <p></p>
+            <p class="hide error">Value cannot be empty or negative</p>
             <button id="saveSalary">Save Salary</button>
           </div>
           <div class="right">
@@ -38,14 +37,17 @@
       <div class="result">
         <div class="result1">
           <h3>Salary</h3>
+          <span id="amount">0</span>
           <p id="salario"></p>
         </div>
         <div class="result2">
           <h3>Expenses</h3>
+          <span id="Expense Amount">0</span>
           <p></p>
         </div>
         <div class="result3">
           <h3>Balance</h3>
+          <span id="balance">0</span>
           <p></p>
         </div>
       </div>
