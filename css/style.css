@@ -144,6 +144,51 @@ h1 {
   border: none;
   color: #587ef4;
 }
+
+/* Space between the amount and the edit button */
+.sublist-content .edit {
+  margin-left: 20px; /* Adjust this value to get the exact spacing you want */
+  margin-right: 10px; /* Space between edit and delete buttons */
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  color: #5858e8; /* Optional: gives the pen a nice blue color */
+}
+
+.sublist-content .delete {
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  color: #ff4d4d; /* Optional: gives the trash can a red color */
+}
+
+/* Optional: Make the list rows look a bit cleaner */
+.sublist-content {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.sublist-content .amount {
+  margin-left: auto; /* Pushes the amount and buttons to the right */
+}
+
+.habit-container {
+  text-align: center;
+  margin: 20px 0;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  min-height: 40px;
+}
+
+#habit-message {
+  font-weight: 600;
+  font-size: 1.1em;
+  transition: all 0.3s ease;
+}
+
 @media screen and (max-width: 600px) {
   .wrapper {
     font-size: 14px;
