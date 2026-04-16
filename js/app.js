@@ -176,5 +176,31 @@ const listCreator = (name, value) => {
   list.appendChild(sublistContent);
 };
 
+// Clear All Feature
+const clearAllButton = document.getElementById("clear-all");
+
+clearAllButton.addEventListener("click", () => {
+  // 1. Confirm with the user (so they don't delete by accident)
+  if (confirm("Are you sure you want to clear your entire budget?")) {
+    // 2. Clear HTML list
+    list.innerHTML = "";
+
+    // 3. Reset Salary and UI values
+    amountDisplay.setAttribute("data-value", "0");
+    amountDisplay.innerText = currencyFormatter.format(0);
+
+    // 4. Wipe LocalStorage
+    localStorage.removeItem("kshflow_salary");
+    localStorage.removeItem("kshflow_expenses");
+
+    // 5. Re-run totals to reset balance and status
+    updateTotals();
+
+    // 6. Reset any active edit modes
+    editTarget = null;
+    checkAmountButton.innerText = "Save Expense";
+  }
+});
+
 // Initial Load
 window.onload = loadFromKshFlow;
