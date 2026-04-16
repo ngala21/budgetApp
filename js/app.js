@@ -10,17 +10,42 @@ const amountDisplay = document.getElementById("amount");
 const expenditureValue = document.getElementById("expenditure-value");
 const balanceValue = document.getElementById("balance-amount");
 const list = document.getElementById("list");
+const habitMessage = document.getElementById("habit-message");
 
 // Global State
 let editTarget = null;
 
-// Currency Formatter (Kenya Shillings example - change 'KES' to 'USD' if needed)
 const currencyFormatter = new Intl.NumberFormat("en-KE", {
   style: "currency",
   currency: "KES",
 });
 
-// --- 1. LocalStorage Helpers ---
+// --- 1. Money Habit Logic ---
+const updateMoneyHabit = (balance, salary) => {
+  if (salary === 0) {
+    habitMessage.innerText = "";
+    return;
+  }
+
+  const percentageLeft = (balance / salary) * 100;
+
+  if (percentageLeft <= 0) {
+    habitMessage.innerText = "🚨 You are a total Spendthrift! You're broke!";
+    habitMessage.style.color = "#d63031";
+  } else if (percentageLeft < 20) {
+    habitMessage.innerText =
+      "⚠️ Living on the edge! Slow down on the spending.";
+    habitMessage.style.color = "#e67e22";
+  } else if (percentageLeft < 50) {
+    habitMessage.innerText = "📊 Doing okay, but watch those impulse buys.";
+    habitMessage.style.color = "#f1c40f";
+  } else {
+    habitMessage.innerText = "💰 Financial Guru! Great job saving.";
+    habitMessage.style.color = "#27ae60";
+  }
+};
+
+// --- 2. LocalStorage Helpers ---
 const saveToLocalStorage = () => {
   const expenses = [];
   document.querySelectorAll(".sublist-content").forEach((row) => {
@@ -42,17 +67,14 @@ const loadFromLocalStorage = () => {
     localStorage.getItem("budget_expenses") || "[]",
   );
 
-  // Restore Salary
   amountDisplay.setAttribute("data-value", savedSalary);
   amountDisplay.innerText = currencyFormatter.format(savedSalary);
 
-  // Restore Expense List
   savedExpenses.forEach((exp) => listCreator(exp.name, exp.value));
-
   updateTotals();
 };
 
-// --- 2. Centralized Total Calculation ---
+// --- 3. Centralized Total Calculation ---
 const updateTotals = () => {
   let totalExpenses = 0;
   const allExpenseAmounts = document.querySelectorAll(".amount");
@@ -62,16 +84,18 @@ const updateTotals = () => {
   });
 
   const salary = parseInt(amountDisplay.getAttribute("data-value") || 0);
+  const balance = salary - totalExpenses;
 
-  // Update UI with Formatted Currency
   expenditureValue.innerText = currencyFormatter.format(totalExpenses);
-  balanceValue.innerText = currencyFormatter.format(salary - totalExpenses);
+  balanceValue.innerText = currencyFormatter.format(balance);
 
-  // Save state after any change
+  // Update the Habit Message
+  updateMoneyHabit(balance, salary);
+
   saveToLocalStorage();
 };
 
-// --- 3. Salary Logic ---
+// --- 4. Salary Logic ---
 totalAmountButton.addEventListener("click", () => {
   let val = totalAmount.value;
   if (val === "" || val < 0) {
@@ -85,7 +109,7 @@ totalAmountButton.addEventListener("click", () => {
   }
 });
 
-// --- 4. Edit & Delete Logic ---
+// --- 5. Edit & Delete Logic ---
 const modifyElement = (element, edit = false) => {
   let parentDiv = element.parentElement;
 
@@ -96,14 +120,13 @@ const modifyElement = (element, edit = false) => {
       .getAttribute("data-value");
     editTarget = parentDiv;
     checkAmountButton.innerText = "Update Expense";
-    parentDiv.classList.add("editing-row");
   } else {
     parentDiv.remove();
     updateTotals();
   }
 };
 
-// --- 5. List Creation ---
+// --- 6. List Creation ---
 const listCreator = (name, value) => {
   let sublistContent = document.createElement("div");
   sublistContent.classList.add("sublist-content", "flex-space");
@@ -126,7 +149,7 @@ const listCreator = (name, value) => {
   list.appendChild(sublistContent);
 };
 
-// --- 6. Save / Update Expense Button ---
+// --- 7. Save / Update Expense Button ---
 checkAmountButton.addEventListener("click", () => {
   if (!userAmount.value || !productTitle.value) {
     productTitleError.classList.remove("hide");
@@ -135,17 +158,14 @@ checkAmountButton.addEventListener("click", () => {
   productTitleError.classList.add("hide");
 
   if (editTarget) {
-    // Update existing
     editTarget.querySelector(".product").innerText = productTitle.value;
     const amtEl = editTarget.querySelector(".amount");
     amtEl.setAttribute("data-value", userAmount.value);
     amtEl.innerText = currencyFormatter.format(userAmount.value);
 
-    editTarget.classList.remove("editing-row");
     editTarget = null;
     checkAmountButton.innerText = "Save Expense";
   } else {
-    // Create new
     listCreator(productTitle.value, userAmount.value);
   }
 
@@ -154,5 +174,4 @@ checkAmountButton.addEventListener("click", () => {
   userAmount.value = "";
 });
 
-// Initialize app on load
 window.onload = loadFromLocalStorage;
