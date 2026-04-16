@@ -77,14 +77,14 @@ h1 {
 }
 
 /* Styling for the Description Paragraph below H1 */
-.sub-container p {
+.title {
   text-align: center;
   color: #586069;
   font-size: 1.1rem;
   font-weight: 500;
   line-height: 1.5;
   margin-bottom: 10px;
-  max-width: 400px;
+  max-width: 650px;
   margin-left: auto;
   margin-right: auto;
 }
