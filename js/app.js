@@ -1,104 +1,124 @@
-// console.log("Hello World"); => For testing purposes only
-let totalAmount = document.getElementById("total-amount");
-let userAmount = document.getElementById("user-amount");
+const totalAmount = document.getElementById("total-amount");
+const userAmount = document.getElementById("user-amount");
 const checkAmountButton = document.getElementById("check-amount");
 const totalAmountButton = document.getElementById("total-amount-button");
 const productTitle = document.getElementById("product-title");
 const errorMessage = document.getElementById("budget-error");
 const productTitleError = document.getElementById("product-title-error");
-const productCostError = document.getElementById("product-cost-error");
 const amount = document.getElementById("amount");
 const expenditureValue = document.getElementById("expenditure-value");
 const balanceValue = document.getElementById("balance-amount");
 const list = document.getElementById("list");
-let tempAmount = 0;
 
-// Salary Column
+// This variable stores the row currently being edited
+let editTarget = null;
+
+// --- 1. Salary Logic ---
 totalAmountButton.addEventListener("click", () => {
-  tempAmount = totalAmount.value;
-  //empty or negative input
+  let tempAmount = totalAmount.value;
   if (tempAmount === "" || tempAmount < 0) {
     errorMessage.classList.remove("hide");
   } else {
     errorMessage.classList.add("hide");
-    //Set Budget
-    amount.innerHTML = tempAmount;
-    //Set Balance
-    balanceValue.innerText = tempAmount - expenditureValue.innerText;
-    //Clear Input Box
+    amount.innerText = tempAmount;
+    updateTotals();
     totalAmount.value = "";
   }
 });
 
-//Function To Disable Edit and Delete Button
-const disableButtons = (bool) => {
-  let editButtons = document.getElementsByClassName("edit");
-  Array.from(editButtons).forEach((element) => {
-    element.disabled = bool;
+// --- 2. Centralized Total Calculation ---
+// This function looks at every item in your list and updates the UI
+const updateTotals = () => {
+  let totalExpenses = 0;
+  const allExpenseAmounts = document.querySelectorAll(".amount");
+
+  allExpenseAmounts.forEach((item) => {
+    totalExpenses += parseInt(item.innerText);
   });
+
+  expenditureValue.innerText = totalExpenses;
+  balanceValue.innerText = parseInt(amount.innerText) - totalExpenses;
 };
 
-//Function To Modify List Elements
+// --- 3. Edit & Delete Logic ---
 const modifyElement = (element, edit = false) => {
   let parentDiv = element.parentElement;
-  let currentBalance = balanceValue.innerText;
-  let currentExpense = expenditureValue.innerText;
-  let parentAmount = parentDiv.querySelector(".amount").innerText;
+
   if (edit) {
-    let parentText = parentDiv.querySelector(".product").innerText;
-    productTitle.value = parentText;
-    userAmount.value = parentAmount;
-    disableButtons(true);
+    // Fill the top inputs with the current row's data
+    productTitle.value = parentDiv.querySelector(".product").innerText;
+    userAmount.value = parentDiv.querySelector(".amount").innerText;
+
+    // Set this row as our "target" so we know which one to update later
+    editTarget = parentDiv;
+
+    // Change button text so you know you are in "Edit Mode"
+    checkAmountButton.innerText = "Update Expense";
+
+    // Optional: Highlight the row being edited
+    document
+      .querySelectorAll(".sublist-content")
+      .forEach((el) => (el.style.borderLeft = "none"));
+    parentDiv.style.borderLeft = "5px solid #2ecc71";
+  } else {
+    // Delete logic
+    parentDiv.remove();
+    updateTotals();
   }
-  balanceValue.innerText = parseInt(currentBalance) + parseInt(parentAmount);
-  expenditureValue.innerText =
-    parseInt(currentExpense) - parseInt(parentAmount);
-  parentDiv.remove();
 };
 
-//Function To Create List
+// --- 4. List Creation ---
 const listCreator = (expenseName, expenseValue) => {
   let sublistContent = document.createElement("div");
   sublistContent.classList.add("sublist-content", "flex-space");
-  list.appendChild(sublistContent);
-  sublistContent.innerHTML = `<p class="product">${expenseName}</p><p class="amount">${expenseValue}</p>`;
+
+  sublistContent.innerHTML = `
+    <p class="product">${expenseName}</p>
+    <p class="amount">${expenseValue}</p>
+  `;
+
+  // Create Edit Button
   let editButton = document.createElement("button");
   editButton.classList.add("fa-solid", "fa-pen-to-square", "edit");
-  editButton.style.fontSize = "1.2em";
-  editButton.addEventListener("click", () => {
-    modifyElement(editButton, true);
-  });
+  editButton.addEventListener("click", () => modifyElement(editButton, true));
+
+  // Create Delete Button
   let deleteButton = document.createElement("button");
   deleteButton.classList.add("fa-solid", "fa-trash-can", "delete");
-  deleteButton.style.fontSize = "1.2em";
-  deleteButton.addEventListener("click", () => {
-    modifyElement(deleteButton);
-  });
+  deleteButton.addEventListener("click", () => modifyElement(deleteButton));
+
   sublistContent.appendChild(editButton);
   sublistContent.appendChild(deleteButton);
-  document.getElementById("list").appendChild(sublistContent);
+  list.appendChild(sublistContent);
 };
 
-//Function To Add Expenses
+// --- 5. Save / Update Expense Button ---
 checkAmountButton.addEventListener("click", () => {
-  //empty checks
+  // Validate inputs
   if (!userAmount.value || !productTitle.value) {
     productTitleError.classList.remove("hide");
-    return false;
+    return;
   }
-  //Enable buttons
-  disableButtons(false);
-  //Expense
-  let expenditure = parseInt(userAmount.value);
-  //Total expense (existing + new)
-  let sum = parseInt(expenditureValue.innerText) + expenditure;
-  expenditureValue.innerText = sum;
-  //Total balance(budget - total expense)
-  const totalBalance = tempAmount - sum;
-  balanceValue.innerText = totalBalance;
-  //Create list
-  listCreator(productTitle.value, userAmount.value);
-  //Empty inputs
+  productTitleError.classList.add("hide");
+
+  if (editTarget) {
+    // MODE: UPDATE (Editing an existing row)
+    editTarget.querySelector(".product").innerText = productTitle.value;
+    editTarget.querySelector(".amount").innerText = userAmount.value;
+    editTarget.style.borderLeft = "none"; // Remove highlight
+
+    // Reset back to "Normal Mode"
+    editTarget = null;
+    checkAmountButton.innerText = "Save Expense";
+  } else {
+    // MODE: NEW (Creating a fresh row)
+    listCreator(productTitle.value, userAmount.value);
+  }
+
+  // Sync the Salary/Expense/Balance totals
+  updateTotals();
+
+  // Clear inputs
   productTitle.value = "";
   userAmount.value = "";
 });
