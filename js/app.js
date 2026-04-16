@@ -30,16 +30,33 @@ totalAmountButton.addEventListener("click", () => {
   }
 });
 
-// document.getElementById();
+//Function To Disable Edit and Delete Button
+const disableButtons = (bool) => {
+  let editButtons = document.getElementsByClassName("edit");
+  Array.from(editButtons).forEach((element) => {
+    element.disabled = bool;
+  });
+};
+
+//Function To Modify List Elements
+const modifyElement = (element, edit = false) => {
+  let parentDiv = element.parentElement;
+  let currentBalance = balanceValue.innerText;
+  let currentExpense = expenditureValue.innerText;
+  let parentAmount = parentDiv.querySelector(".amount").innerText;
+  if (edit) {
+    let parentText = parentDiv.querySelector(".product").innerText;
+    productTitle.value = parentText;
+    userAmount.value = parentAmount;
+    disableButtons(true);
+  }
+  balanceValue.innerText = parseInt(currentBalance) + parseInt(parentAmount);
+  expenditureValue.innerText =
+    parseInt(currentExpense) - parseInt(parentAmount);
+  parentDiv.remove();
+};
 
 // Expense Column
-document.getElementById("saveExpense").onclick = () => {
-  let Expense = document.getElementById("rightName").value;
-  let expenditureValue = document.getElementById("rightAmount").value;
-
-  document.getElementById("expenseHeading").innerText = Expense;
-  document.getElementById("expenseTitle").innerText = expenditureValue;
-};
 
 // console.log(Expense);
 // console.log(Amount);
